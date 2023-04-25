@@ -11,9 +11,16 @@ class BooksController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = book::orderBy('id', 'asc')->paginate(2);
+        $searchQuery = $request->searchQuery;
+        if (strlen($searchQuery)) {
+            $data = book::where('title', 'like', "%$searchQuery%")
+                ->orWhere('author', 'like', "%$searchQuery%")
+                ->paginate(10);
+        } else {
+            $data = book::orderBy('id', 'asc')->paginate(10);
+        }
         return view('books.index')->with('data', $data);
     }
 
@@ -100,6 +107,7 @@ class BooksController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        book::where('id', $id)->delete();
+        return redirect()->to('books')->with('success', 'successfully deleted the book');
     }
 }

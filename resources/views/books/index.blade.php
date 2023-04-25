@@ -4,8 +4,8 @@
 <div class="my-3 p-3 bg-body rounded shadow-sm">
         <!-- FORM PENCARIAN -->
         <div class="pb-3">
-          <form class="d-flex" action="" method="get">
-              <input class="form-control me-1" type="search" name="katakunci" value="{{ Request::get('katakunci') }}" placeholder="Masukkan kata kunci" aria-label="Search">
+          <form class="d-flex" action="{{ url('books') }}" method="get">
+              <input class="form-control me-1" type="search" name="searchQuery" value="{{ Request::get('searchQuery') }}" placeholder="Masukkan kata kunci" aria-label="Search">
               <button class="btn btn-secondary" type="submit">Cari</button>
           </form>
         </div>
@@ -34,13 +34,19 @@
                         <td> {{ $datum->release }}</td>
                         <td>
                             <a href='{{ url('books/'. $datum->id .'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
-                            <a href='' class="btn btn-danger btn-sm">Delete</a>
+                            <form onsubmit="return confirm('Are you sure you want to delete this book ?')" class='d-inline' action="{{ url('books/'.$datum->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" name="submit"class="btn btn-danger btn-sm">
+                                    Delete
+                                </button>
+                            </form>
                         </td>
                      </tr>
                 @endforeach
             </tbody>
         </table>
-    {{ $data->links() }}
+    {{ $data->withQueryString()->links() }}
   </div>
 @endsection
   <!-- AKHIR DATA -->
